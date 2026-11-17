@@ -1,0 +1,13 @@
+# Netlify settings. The app is plain HTML/CSS/JS, so there is no build step.
+[build]
+  publish = "."
+
+[[headers]]
+  for = "/manifest.webmanifest"
+  [headers.values]
+    Content-Type = "application/manifest+json"
+
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Cache-Control = "no-cache"

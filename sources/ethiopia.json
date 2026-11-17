@@ -1,0 +1,49 @@
+{
+  "country": "Ethiopia",
+  "lastChecked": "2026-11-17",
+  "note": "Legal movie and TV services that work in Ethiopia. Prices and availability change, so check each service before paying. To suggest a change, edit this file and open a pull request.",
+  "services": [
+    {
+      "name": "teleStream (Ethio telecom)",
+      "url": "https://www.ethiotelecom.et/ethio-telecom-telestream/",
+      "kind": "paid",
+      "language": "Amharic + international",
+      "description": "Ethio telecom's internet TV: 60+ live channels and about 350 on-demand titles. Sold with internet packages through the telebirr SuperApp or a service center."
+    },
+    {
+      "name": "TeleTV",
+      "url": "https://www.teletv.et",
+      "kind": "rent",
+      "language": "Amharic",
+      "description": "Online cinema by Ethio telecom and EagleLion. Rent Amharic films and pay with telebirr (Visa/Mastercard from abroad)."
+    },
+    {
+      "name": "MayaFlicks",
+      "url": "https://www.mayaflicks.com",
+      "kind": "paid",
+      "language": "Amharic",
+      "description": "Ethiopian films, series and documentaries by actress-producer Ameleset Muchie. Pay with telebirr or airtime. Web, Android and iPhone."
+    },
+    {
+      "name": "Sodere",
+      "url": "https://www.sodere.com",
+      "kind": "paid",
+      "language": "Amharic",
+      "description": "Ethiopian movies and premieres by monthly or yearly subscription, with new films added regularly."
+    },
+    {
+      "name": "Netflix",
+      "url": "https://www.netflix.com",
+      "kind": "paid",
+      "language": "International",
+      "description": "Works in Ethiopia, but it needs an international Visa/Mastercard, which many Ethiopian bank cards can't do."
+    },
+    {
+      "name": "Free classic films (Internet Archive)",
+      "url": "https://archive.org/details/feature_films",
+      "kind": "free",
+      "language": "Mostly English",
+      "description": "Thousands of old films that are in the public domain and free to watch. Already built into this app on the Free films tab."
+    }
+  ]
+}

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#14110f">
+  <meta name="description" content="Sinima: a free, open-source movie app with legal free films, Ethiopian streaming services and sources you add yourself.">
+  <title>Sinima</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="top">
+    <h1 class="brand"><span class="brand-mark" aria-hidden="true"></span>Sinima</h1>
+  </header>
+
+  <main>
+    <!-- FREE FILMS: public-domain films from the Internet Archive -->
+    <section id="view-free" class="view" aria-labelledby="free-h">
+      <h2 id="free-h" class="sr-only">Free films</h2>
+      <form id="free-search" class="search" role="search">
+        <input id="free-q" type="search" placeholder="Search free classic films" aria-label="Search free films">
+        <button type="submit">Search</button>
+      </form>
+      <div id="genres" class="chips" role="group" aria-label="Genres"></div>
+      <p class="hint">Old films that are in the public domain, from the Internet Archive. Free and legal to watch.</p>
+      <div id="free-grid" class="grid" aria-live="polite"></div>
+      <button id="free-more" class="ghost wide" hidden>Load more</button>
+    </section>
+
+    <!-- SERVICES: legal services that work in Ethiopia (loaded from sources/ethiopia.json) -->
+    <section id="view-services" class="view" hidden aria-labelledby="svc-h">
+      <h2 id="svc-h">Legal services in Ethiopia</h2>
+      <p id="svc-note" class="hint"></p>
+      <div id="svc-list" class="cards"></div>
+    </section>
+
+    <!-- MY SOURCES: things the user adds by hand -->
+    <section id="view-mine" class="view" hidden aria-labelledby="mine-h">
+      <div class="row-between">
+        <h2 id="mine-h">My sources</h2>
+        <button id="add-open" class="primary">+ Add</button>
+      </div>
+      <p class="hint">Add videos, playlists or websites you have the right to watch. They're saved on this device only.</p>
+      <div id="mine-list" class="cards"></div>
+      <details class="backup">
+        <summary>Back up or move my sources</summary>
+        <p class="hint">Copy this text to keep it safe, or paste text from another device and tap Import.</p>
+        <textarea id="backup-text" rows="5" aria-label="Sources backup text"></textarea>
+        <div class="row">
+          <button id="backup-copy" class="ghost">Copy</button>
+          <button id="backup-import" class="ghost">Import</button>
+        </div>
+        <p id="backup-msg" class="hint" role="status"></p>
+      </details>
+    </section>
+
+    <!-- A source's own list (playlist or catalog) -->
+    <section id="view-source" class="view" hidden aria-labelledby="source-h">
+      <button id="source-back" class="ghost">‹ Back</button>
+      <h2 id="source-h"></h2>
+      <div id="source-list" class="list"></div>
+    </section>
+  </main>
+
+  <nav class="tabs" aria-label="Sections">
+    <button data-tab="free" aria-current="page">Free films</button>
+    <button data-tab="services">Services</button>
+    <button data-tab="mine">My sources</button>
+  </nav>
+
+  <!-- Player -->
+  <div id="player" class="overlay" hidden role="dialog" aria-modal="true" aria-labelledby="player-title">
+    <div class="player-box">
+      <div class="row-between">
+        <h3 id="player-title"></h3>
+        <button id="player-close" class="ghost" aria-label="Close player">✕</button>
+      </div>
+      <video id="video" controls playsinline preload="metadata"></video>
+      <p id="player-info" class="hint"></p>
+      <p id="player-error" class="error" role="alert" hidden></p>
+    </div>
+  </div>
+
+  <!-- Add-source form -->
+  <div id="add" class="overlay" hidden role="dialog" aria-modal="true" aria-labelledby="add-h">
+    <form id="add-form" class="player-box">
+      <div class="row-between">
+        <h3 id="add-h">Add a source</h3>
+        <button type="button" id="add-close" class="ghost" aria-label="Close">✕</button>
+      </div>
+      <label>Type
+        <select id="add-type">
+          <option value="video">Single video link (.mp4, .webm, .m3u8)</option>
+          <option value="m3u">Playlist link (.m3u / .m3u8 list)</option>
+          <option value="catalog">Catalog link (Sinima .json)</option>
+          <option value="website">Website shortcut (opens the site)</option>
+        </select>
+      </label>
+      <label>Name
+        <input id="add-name" required maxlength="80" placeholder="e.g. My family videos">
+      </label>
+      <label>Link
+        <input id="add-url" required type="url" placeholder="https://…">
+      </label>
+      <p id="add-help" class="hint"></p>
+      <p id="add-error" class="error" role="alert" hidden></p>
+      <button type="submit" class="primary wide">Save</button>
+    </form>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.20/dist/hls.min.js" defer></script>
+  <script src="app.js" defer></script>
+</body>
+</html>
