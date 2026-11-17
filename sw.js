@@ -1,7 +1,7 @@
 /* Service worker: keeps the app's own files on the phone so it opens offline.
  * Videos and archive.org data are never cached (too big, and they change). */
 
-const CACHE = 'sinima-v4';
+const CACHE = 'sinima-v5';
 const APP_FILES = [
   './',
   'index.html',

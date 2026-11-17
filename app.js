@@ -50,6 +50,17 @@ function isWebUrl(text) {
   }
 }
 
+// Load a page in a brand-new copy of a frame. Changing the page of an existing
+// frame adds steps to the browser history, which would break the back button.
+function loadFrame(frame, url, extraAttrs = {}) {
+  const fresh = frame.cloneNode(false);
+  fresh.removeAttribute('src');
+  for (const [k, v] of Object.entries(extraAttrs)) fresh.setAttribute(k, v);
+  if (url) fresh.setAttribute('src', url);
+  frame.replaceWith(fresh);
+  return fresh;
+}
+
 const naturalSort = (a, b) => a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' });
 const cleanSearch = (text) => text.replace(/[^\p{L}\p{N} ]/gu, ' ').trim();
 const stripHtml = (html) => {
@@ -118,7 +129,8 @@ let closingPlayer = false;
 
 function render(name) {
   for (const [key, view] of Object.entries(views)) view.hidden = key !== name;
-  if (name !== 'web') { $('#web-frame').removeAttribute('src'); shownBy.web = null; }
+  if (name !== 'web' && $('#web-frame').hasAttribute('src')) { loadFrame($('#web-frame'), ''); shownBy.web = null; }
+  document.body.classList.toggle('immersive', name === 'web');
   if (name !== 'grid') $('#grid-embed').replaceChildren();
   const tab = stack[0].name;
   document.querySelectorAll('.tabs button').forEach((b) => {
@@ -169,12 +181,16 @@ document.querySelectorAll('.back').forEach((b) => b.addEventListener('click', ba
 
 /* ================================================================ settings */
 
-const settings = Object.assign({ autoplay: true, speed: 1 }, storage.get('sinima.settings.v1', {}));
+const settings = Object.assign({ autoplay: true, speed: 1, landscape: true, popups: false, webHint: true }, storage.get('sinima.settings.v1', {}));
 const saveSettings = () => storage.set('sinima.settings.v1', settings);
 
 $('#set-autoplay').checked = settings.autoplay;
 $('#set-speed').value = String(settings.speed);
 $('#set-autoplay').addEventListener('change', (e) => { settings.autoplay = e.target.checked; saveSettings(); });
+$('#set-landscape').checked = settings.landscape;
+$('#set-popups').checked = settings.popups;
+$('#set-landscape').addEventListener('change', (e) => { settings.landscape = e.target.checked; saveSettings(); });
+$('#set-popups').addEventListener('change', (e) => { settings.popups = e.target.checked; saveSettings(); });
 $('#set-speed').addEventListener('change', (e) => { settings.speed = Number(e.target.value); saveSettings(); });
 
 /* ================================================================ watch progress */
@@ -657,7 +673,20 @@ function buildHome() {
     const conn = ADAPTERS[s.type].create(s.url);
     rows.append(lazyRow(s.name, conn, () => openSource(s)));
   }
+  const sites = sources.filter((x) => x.type === 'website' || x.type === 'youtube');
+  if (sites.length) rows.append(rowSection('Your websites & channels', () => switchTab('sources'), sites.map(siteTile), true));
   HOME_ROWS.slice(3).forEach((row) => rows.append(lazyRow(row.title, archiveConn(row), () => openGrid(archiveConn(row)))));
+}
+
+function siteTile(s) {
+  const host = new URL(s.url).hostname;
+  const letter = el('div', { class: 'site-letter' }, (s.name || host).trim().charAt(0).toUpperCase());
+  const icon = el('img', { class: 'site-icon', alt: '', loading: 'lazy', src: `https://icons.duckduckgo.com/ip3/${host}.ico`,
+    onerror: (e) => e.target.remove() });
+  return el('button', { class: 'film site', type: 'button', onclick: () => openSource(s) },
+    el('div', { class: 'poster' }, letter, icon),
+    el('div', { class: 't' }, s.name),
+    el('div', { class: 'y' }, host.replace(/^www\./, '')));
 }
 
 /* ================================================================ GRID screen */
@@ -883,7 +912,7 @@ async function loadSimilar(item, d, token) {
 
 const player = $('#player');
 const video = $('#video');
-const embed = $('#embed');
+const embedFrame = () => $('#embed');
 let hls = null;
 let now = null; // { item, episodes, index }
 let lastSave = 0;
@@ -910,13 +939,13 @@ function playFrom(item, episodes, index) {
   $('#player-controls').querySelectorAll('label').forEach((l) => { l.hidden = isEmbed; });
   if (isEmbed) {
     video.hidden = true;
-    embed.hidden = false;
-    embed.src = play.url;
+    const fr = loadFrame(embedFrame(), play.url);
+    fr.hidden = false;
     return;
   }
 
   video.hidden = false;
-  embed.hidden = true;
+  embedFrame().hidden = true;
   const isHls = /\.m3u8(\?|$)/i.test(play.url);
   if (isHls && !video.canPlayType('application/vnd.apple.mpegurl') && window.Hls && window.Hls.isSupported()) {
     hls = new window.Hls();
@@ -942,8 +971,8 @@ function stopVideo() {
   video.removeAttribute('src');
   video.querySelectorAll('track').forEach((t) => { if (t.src.startsWith('blob:')) URL.revokeObjectURL(t.src); t.remove(); });
   video.load();
-  embed.removeAttribute('src');
-  embed.hidden = true;
+  if (embedFrame().hasAttribute('src')) loadFrame(embedFrame(), '');
+  embedFrame().hidden = true;
   video.hidden = false;
 }
 
@@ -969,6 +998,7 @@ $('#player-close').addEventListener('click', () => closePlayer(false));
 $('#player-prev').addEventListener('click', () => { if (now && now.index > 0) playFrom(now.item, now.episodes, now.index - 1); });
 $('#player-next').addEventListener('click', () => { if (now && now.index < now.episodes.length - 1) playFrom(now.item, now.episodes, now.index + 1); });
 $('#player-speed').addEventListener('change', (e) => { video.playbackRate = Number(e.target.value); });
+$('#player-full').addEventListener('click', () => goFullscreen(video.hidden ? embedFrame() : video));
 
 video.addEventListener('error', () => { if (video.getAttribute('src')) showPlayerError(); });
 video.addEventListener('timeupdate', () => { if (Date.now() - lastSave > 5000) saveNow(false); });
@@ -1185,15 +1215,51 @@ function removeSource(id) {
 function openSource(s) {
   if (!isWebUrl(s.url) || !ADAPTERS[s.type]) return;
   if (s.type === 'website') {
-    open('web', () => {
-      $('#web-h').textContent = s.name;
-      $('#web-out').href = s.url;
-      $('#web-frame').src = s.url;
-    });
+    open('web', () => showWebsite(s));
     return;
   }
   openGrid(ADAPTERS[s.type].create(s.url), ADAPTERS[s.type].label, s.name);
 }
+
+/* ---- websites inside the app ---- */
+
+function showWebsite(s) {
+  $('#web-h').textContent = s.name;
+  $('#web-out').href = s.url;
+  $('#web-hint').hidden = !settings.webHint;
+  // The sandbox keeps the site inside its frame: it can't take over the app.
+  // Pop-ups are blocked unless the user allows them in More > Settings.
+  loadFrame($('#web-frame'), s.url, {
+    sandbox: 'allow-scripts allow-same-origin allow-forms allow-presentation allow-downloads' +
+      (settings.popups ? ' allow-popups allow-popups-to-escape-sandbox' : ''),
+  });
+}
+
+$('#web-reload').addEventListener('click', () => {
+  const frame = $('#web-frame');
+  loadFrame(frame, frame.getAttribute('src'));
+});
+$('#web-full').addEventListener('click', () => goFullscreen($('#web-frame')));
+$('#web-hint-close').addEventListener('click', () => { settings.webHint = false; saveSettings(); $('#web-hint').hidden = true; });
+
+/* ---- full screen (turns the phone sideways when allowed) ---- */
+
+async function goFullscreen(element) {
+  try {
+    if (element.requestFullscreen) await element.requestFullscreen({ navigationUI: 'hide' });
+    else if (element.webkitRequestFullscreen) element.webkitRequestFullscreen();
+    else if (element.webkitEnterFullscreen) element.webkitEnterFullscreen(); // iPhone video
+  } catch { /* not allowed here */ }
+}
+
+document.addEventListener('fullscreenchange', async () => {
+  const o = screen.orientation;
+  if (!o || !o.lock) return;
+  try {
+    if (document.fullscreenElement && settings.landscape) await o.lock('landscape');
+    else if (!document.fullscreenElement) o.unlock();
+  } catch { /* some phones and browsers don't allow this */ }
+});
 
 /* ---- add-source form ---- */
 

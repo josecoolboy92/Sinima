@@ -128,11 +128,21 @@ a.primary { color: var(--accent-ink); }
 .desc.open { -webkit-line-clamp: unset; }
 #detail-similar { margin-top: 22px; }
 
-/* ---- web view ---- */
-.web-view { max-width: none; }
-.web-title { margin: 0; font-size: 1rem; flex: 1; text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-a.ghost { font-size: .85rem; white-space: nowrap; }
-#web-frame { width: 100%; height: calc(100vh - 250px); min-height: 380px; border: 1px solid var(--line); border-radius: var(--radius); background: #fff; }
+/* ---- web view: edge to edge, the app's header and tabs are hidden ---- */
+body.immersive { padding-bottom: 0; }
+body.immersive .top, body.immersive .tabs { display: none; }
+body.immersive main { max-width: none; padding: 0; }
+.web-view { display: flex; flex-direction: column; height: 100dvh; }
+.web-bar { display: flex; align-items: center; gap: 6px; padding: calc(6px + env(safe-area-inset-top)) 8px 6px;
+  background: var(--panel); border-bottom: 1px solid var(--line); flex: none; }
+.web-title { margin: 0; font-size: .98rem; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.icon-btn { flex: none; width: 40px; height: 40px; display: grid; place-items: center; border-radius: 10px;
+  background: transparent; border: 1px solid var(--line); font-size: 1.15rem; color: var(--text); text-decoration: none; }
+.web-hint { margin: 0; padding: 8px 12px; font-size: .82rem; color: var(--muted); background: var(--panel-2); flex: none; }
+.link-btn { background: none; border: 0; color: var(--accent); font-weight: 600; padding: 0 4px; }
+#web-frame { flex: 1; width: 100%; border: 0; background: #fff; display: block;
+  padding-bottom: env(safe-area-inset-bottom); }
+#web-frame:fullscreen, video:fullscreen, #embed:fullscreen { width: 100vw; height: 100vh; max-height: none; border-radius: 0; background: #000; }
 
 /* ---- settings ---- */
 .settings { display: grid; gap: 14px; }
@@ -170,3 +180,7 @@ video::cue { background: rgb(0 0 0 / .7); font-size: 1.05em; }
 label { display: block; margin-top: 12px; font-size: .9rem; color: var(--muted); }
 label input, label select { margin-top: 6px; color: var(--text); }
 .opt { color: var(--muted); font-size: .8rem; }
+.switch-row small { display: block; margin-top: 2px; }
+.site .poster { display: grid; place-items: center; position: relative; background: var(--panel-2); }
+.site-letter { font-size: 2.2rem; font-weight: 700; color: var(--accent); }
+.site-icon { position: absolute; width: 44px; height: 44px; border-radius: 10px; background: var(--panel-2); object-fit: contain; }

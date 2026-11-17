@@ -69,6 +69,14 @@
             <option value="1.5">1.5×</option><option value="2">2×</option>
           </select>
         </label>
+        <label class="switch-row">
+          <span>Turn the phone sideways for full screen</span>
+          <input id="set-landscape" type="checkbox">
+        </label>
+        <label class="switch-row">
+          <span>Allow pop-ups from websites<br><small class="opt">Off blocks most pop-up ads. Turn on if a site's buttons stop working.</small></span>
+          <input id="set-popups" type="checkbox">
+        </label>
         <div class="row-between">
           <span>Watch history</span>
           <button id="clear-history" class="ghost">Clear</button>
@@ -133,13 +141,16 @@
 
     <!-- WEB: a website shown inside the app -->
     <section id="view-web" class="view web-view" hidden aria-labelledby="web-h">
-      <div class="bar sticky">
-        <button class="ghost back" type="button">‹ Back</button>
+      <div class="web-bar">
+        <button class="icon-btn back" type="button" aria-label="Back">‹</button>
         <h2 id="web-h" class="web-title"></h2>
-        <a id="web-out" class="ghost" target="_blank" rel="noopener">Open in browser</a>
+        <button id="web-reload" class="icon-btn" type="button" aria-label="Reload">⟳</button>
+        <button id="web-full" class="icon-btn" type="button" aria-label="Full screen">⛶</button>
+        <a id="web-out" class="icon-btn" target="_blank" rel="noopener" aria-label="Open in browser">↗</a>
       </div>
-      <p class="hint">Some websites don't allow being shown inside other apps. If you see an error or a blank page, tap "Open in browser".</p>
-      <iframe id="web-frame" title="Website" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-presentation" allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
+      <p id="web-hint" class="web-hint">If you see an error or a blank page, this site doesn't allow being shown inside other apps. Tap ↗ to open it in your browser.
+        <button id="web-hint-close" class="link-btn" type="button">OK</button></p>
+      <iframe id="web-frame" title="Website" allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
     </section>
   </main>
 
@@ -175,6 +186,7 @@
         <label class="mini">Subtitles
           <select id="player-subs"><option value="">Off</option></select>
         </label>
+        <button id="player-full" class="ghost" type="button">⛶ Full screen</button>
         <button id="player-next" class="ghost" hidden>Next ›</button>
       </div>
       <input id="subs-file" type="file" accept=".srt,.vtt,text/vtt,application/x-subrip" hidden>

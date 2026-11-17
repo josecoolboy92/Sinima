@@ -14,6 +14,8 @@ A free, open-source movie and series app that runs in the browser and installs o
 - **My list**: save titles to watch later.
 - **Sources**: add your own collections, channels, playlists and websites (see below). Each gets its own screen and a Home row.
 - **More**: legal streaming services in Ethiopia ([`sources/ethiopia.json`](sources/ethiopia.json)), settings, and backup and restore of your sources and My list.
+- **Websites inside the app**: a website you add opens edge to edge (the app's header and tabs hide), with Back, Reload, **Full screen** and Open-in-browser buttons. Videos inside the site can go full screen too. Pop-ups are blocked by default (switch in More), and the site can't take over the app. Your websites also get a row on Home.
+- **Full screen** for the app's own player too. The phone turns sideways automatically (switch in More).
 - The phone's back button works between screens, and closes the player first.
 
 The built-in films and series are public-domain titles from the [Internet Archive](https://archive.org), free and legal to watch.
@@ -30,7 +32,7 @@ Paste a link and choose **Detect automatically**, or pick the type yourself.
 | Catalog | A Sinima `.json` file (see below) | Movies and series with posters |
 | Playlist | An `.m3u` file | Entries with the same `group-title` become a series |
 | Video | A `.mp4`, `.webm` or `.m3u8` file | Plays in the app |
-| Website | Any website | The site shown inside the app, with an "Open in browser" button |
+| Website | Any website | The site shown edge to edge inside the app, with full screen and an "Open in browser" button |
 
 Notes:
 
