@@ -4,24 +4,33 @@ A free, open-source movie app that runs in the browser and installs on a phone l
 
 - **Free films**: thousands of public-domain classics from the [Internet Archive](https://archive.org/details/feature_films), free and legal to watch. You can search and browse by genre.
 - **Services**: legal streaming services that work in Ethiopia, loaded from [`sources/ethiopia.json`](sources/ethiopia.json).
-- **My sources**: add your own sources by hand. They're saved on your device, and you can back them up or move them with copy and paste.
+- **My sources**: add your own sources by hand. Each source gets its own screen inside the app, with its posters, a search box, Movies and Series tabs, and an episode list for series. Sources are saved on your device, and you can back them up or move them with copy and paste.
 
 ## Source types you can add
 
-| Type | What to paste | What happens |
-| --- | --- | --- |
-| Video | A direct link to a `.mp4`, `.webm` or `.m3u8` file | Plays in the app |
-| Playlist | A link to an `.m3u` playlist | Lists every entry, each plays in the app |
-| Catalog | A link to a Sinima catalog `.json` (see below) | Lists the movies with posters |
-| Website | Any website | Opens the site, like a bookmark |
+Paste a link and choose **Detect automatically**, or pick the type yourself.
 
-Some sites don't allow other apps to read their files. A playlist or catalog from those sites won't open, but the same link still works as a **Website** shortcut.
+| Type | Example link | What you get in the app |
+| --- | --- | --- |
+| Internet Archive | `https://archive.org/details/classic_tv` | Poster grid with search. Items with several videos open as a series with episodes |
+| PeerTube | `https://peertube.tv/c/channelname` (also `/a/…` accounts, `/w/p/…` playlists, or a whole PeerTube site) | Poster grid; a playlist shows as one series |
+| YouTube | A playlist link with `list=`, a video link, or `youtube.com/channel/UC…` | YouTube's official player with its own episode list |
+| Catalog | A Sinima `.json` file (see below) | Movies and series with posters |
+| Playlist | An `.m3u` file | Entries with the same `group-title` become a series |
+| Video | A `.mp4`, `.webm` or `.m3u8` file | Plays in the app |
+| Website | Any website | The site shown inside the app, with an "Open in browser" button |
+
+Notes:
+
+- YouTube doesn't let apps list a playlist's videos without a paid developer key, so YouTube sources use YouTube's own player. Channel links with `@name` can't be used; open the channel's Videos tab, tap **Play all**, and add that link.
+- Some websites don't allow being shown inside other apps. Their page stays blank, so use **Open in browser**.
+- Some sites don't allow other apps to read their files, so their playlists or catalogs won't open.
 
 Only add content you have the right to watch.
 
 ### Catalog format
 
-Put a file like this anywhere online (for example in a GitHub repository) and add its link as a **Catalog**:
+Put a file like this anywhere online (for example in a GitHub repository) and add its link:
 
 ```json
 {
@@ -33,6 +42,16 @@ Put a file like this anywhere online (for example in a GitHub repository) and ad
       "poster": "https://archive.org/services/img/night_of_the_living_dead",
       "year": 1968,
       "description": "Public-domain horror classic."
+    }
+  ],
+  "series": [
+    {
+      "title": "My series",
+      "poster": "https://example.com/poster.jpg",
+      "episodes": [
+        { "title": "Episode 1", "url": "https://example.com/ep1.mp4" },
+        { "title": "Episode 2", "url": "https://example.com/ep2.mp4" }
+      ]
     }
   ]
 }
@@ -48,7 +67,11 @@ npx serve .
 
 Then open the address it prints. (Opening `index.html` directly from disk won't work, because browsers block some features for local files.)
 
-## Put it online (Netlify)
+## It's online
+
+The app is published free with GitHub Pages at <https://josecoolboy92.github.io/Sinima/>, from the `gh-pages` branch. To update the site, push the same commit to `gh-pages`.
+
+## Put it online with Netlify instead
 
 1. On [Netlify](https://app.netlify.com), choose **Add new site → Import an existing project**.
 2. Pick this GitHub repository. Leave the build command empty. The publish directory is `.` (already set in `netlify.toml`).
@@ -68,7 +91,7 @@ Edit [`sources/ethiopia.json`](sources/ethiopia.json). Each service has a `name`
 | --- | --- |
 | `index.html` | The page layout |
 | `styles.css` | Colors and layout |
-| `app.js` | All app logic (commented) |
+| `app.js` | All app logic (commented). Each source type is an "adapter" in `ADAPTERS` |
 | `sources/ethiopia.json` | The legal services list |
 | `manifest.webmanifest`, `sw.js`, `icons/` | Make it installable and let it open offline |
 

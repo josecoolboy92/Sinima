@@ -43,7 +43,7 @@
         <h2 id="mine-h">My sources</h2>
         <button id="add-open" class="primary">+ Add</button>
       </div>
-      <p class="hint">Add videos, playlists or websites you have the right to watch. They're saved on this device only.</p>
+      <p class="hint">Add channels, collections, playlists or websites you have the right to watch. Each one gets its own screen. They're saved on this device only.</p>
       <div id="mine-list" class="cards"></div>
       <details class="backup">
         <summary>Back up or move my sources</summary>
@@ -57,11 +57,45 @@
       </details>
     </section>
 
-    <!-- A source's own list (playlist or catalog) -->
+    <!-- A source's own screen: its posters, search and Movies/Series tabs -->
     <section id="view-source" class="view" hidden aria-labelledby="source-h">
-      <button id="source-back" class="ghost">‹ Back</button>
+      <div class="row-between">
+        <button id="source-back" class="ghost">‹ Back</button>
+        <span id="source-badge" class="badge"></span>
+      </div>
       <h2 id="source-h"></h2>
-      <div id="source-list" class="list"></div>
+      <form id="source-search" class="search" role="search">
+        <input id="source-q" type="search" placeholder="Search this source" aria-label="Search this source">
+        <button type="submit">Search</button>
+      </form>
+      <div id="source-kinds" class="chips" role="group" aria-label="Show" hidden></div>
+      <div id="source-embed" hidden></div>
+      <div id="source-grid" class="grid" aria-live="polite"></div>
+      <button id="source-more" class="ghost wide" hidden>Load more</button>
+    </section>
+
+    <!-- A series: its episodes -->
+    <section id="view-series" class="view" hidden aria-labelledby="series-h">
+      <button id="series-back" class="ghost">‹ Back</button>
+      <div class="series-head">
+        <img id="series-poster" alt="">
+        <div>
+          <h2 id="series-h"></h2>
+          <p id="series-info" class="hint"></p>
+        </div>
+      </div>
+      <div id="series-list" class="list"></div>
+    </section>
+
+    <!-- A website shown inside the app -->
+    <section id="view-web" class="view web-view" hidden aria-labelledby="web-h">
+      <div class="row-between">
+        <button id="web-back" class="ghost">‹ Back</button>
+        <h2 id="web-h" class="web-title"></h2>
+        <a id="web-out" class="ghost" target="_blank" rel="noopener">Open in browser</a>
+      </div>
+      <p class="hint">Some websites don't allow being shown inside other apps. If the page stays blank, tap "Open in browser".</p>
+      <iframe id="web-frame" title="Website" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-presentation" allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
     </section>
   </main>
 
@@ -79,6 +113,11 @@
         <button id="player-close" class="ghost" aria-label="Close player">✕</button>
       </div>
       <video id="video" controls playsinline preload="metadata"></video>
+      <iframe id="embed" title="Video player" hidden allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
+      <div id="player-nav" class="row" hidden>
+        <button id="player-prev" class="ghost">‹ Previous episode</button>
+        <button id="player-next" class="ghost">Next episode ›</button>
+      </div>
       <p id="player-info" class="hint"></p>
       <p id="player-error" class="error" role="alert" hidden></p>
     </div>
@@ -91,19 +130,23 @@
         <h3 id="add-h">Add a source</h3>
         <button type="button" id="add-close" class="ghost" aria-label="Close">✕</button>
       </div>
+      <label>Link
+        <input id="add-url" required type="url" placeholder="Paste a link: https://…">
+      </label>
       <label>Type
         <select id="add-type">
-          <option value="video">Single video link (.mp4, .webm, .m3u8)</option>
-          <option value="m3u">Playlist link (.m3u / .m3u8 list)</option>
-          <option value="catalog">Catalog link (Sinima .json)</option>
-          <option value="website">Website shortcut (opens the site)</option>
+          <option value="auto">Detect automatically</option>
+          <option value="archive">Internet Archive collection or item</option>
+          <option value="peertube">PeerTube channel, account or playlist</option>
+          <option value="youtube">YouTube playlist, channel or video</option>
+          <option value="catalog">Sinima catalog (.json)</option>
+          <option value="m3u">Playlist file (.m3u)</option>
+          <option value="video">Single video file (.mp4, .webm, .m3u8)</option>
+          <option value="website">Website (shown inside the app)</option>
         </select>
       </label>
-      <label>Name
-        <input id="add-name" required maxlength="80" placeholder="e.g. My family videos">
-      </label>
-      <label>Link
-        <input id="add-url" required type="url" placeholder="https://…">
+      <label>Name <span class="opt">(optional)</span>
+        <input id="add-name" maxlength="80" placeholder="Leave empty to use the source's own name">
       </label>
       <p id="add-help" class="hint"></p>
       <p id="add-error" class="error" role="alert" hidden></p>

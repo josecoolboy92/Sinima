@@ -13,6 +13,7 @@
   color-scheme: dark;
 }
 * { box-sizing: border-box; }
+[hidden] { display: none !important; }
 body {
   margin: 0; background: var(--bg); color: var(--text);
   padding-bottom: calc(68px + env(safe-area-inset-bottom));
@@ -102,5 +103,22 @@ textarea { font-family: ui-monospace, monospace; font-size: .8rem; margin-bottom
 .player-box { width: min(900px, 100%); background: var(--panel); border: 1px solid var(--line);
   border-radius: var(--radius); padding: 14px; max-height: 92vh; overflow: auto; }
 video { width: 100%; margin-top: 10px; border-radius: 8px; background: #000; max-height: 70vh; }
+#embed, .embed-frame { width: 100%; aspect-ratio: 16 / 9; border: 0; margin-top: 10px; border-radius: 8px; background: #000; display: block; }
+#embed[hidden] { display: none; }
+#player-nav { margin-top: 10px; justify-content: space-between; }
+#player-nav[hidden] { display: none; }
+.series-head { display: flex; gap: 14px; align-items: flex-start; margin: 12px 0 14px; }
+.series-head img { width: 110px; aspect-ratio: 2 / 3; object-fit: cover; border-radius: var(--radius);
+  background: var(--panel); border: 1px solid var(--line); flex: none; }
+.series-head img[src=""], .series-head img:not([src]) { visibility: hidden; }
+.list .ep-n { color: var(--accent); font-weight: 600; min-width: 2.2em; }
+.film .kind { display: inline-block; margin-top: 4px; font-size: .7rem; color: var(--accent); text-transform: uppercase; letter-spacing: .05em; }
+.web-view { max-width: none; }
+.web-title { margin: 0; font-size: 1rem; flex: 1; text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+a.ghost { text-decoration: none; font-size: .85rem; white-space: nowrap; }
+#web-frame { width: 100%; height: calc(100vh - 230px); min-height: 380px; border: 1px solid var(--line); border-radius: var(--radius); background: #fff; }
+.opt { color: var(--muted); font-size: .8rem; }
 label { display: block; margin-top: 12px; font-size: .9rem; color: var(--muted); }
 label input, label select { margin-top: 6px; color: var(--text); }
+#source-search { margin: 4px 0 14px; }
+#source-kinds { padding-top: 0; margin-bottom: 12px; }
