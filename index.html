@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#14110f">
-  <meta name="description" content="Sinima: a free, open-source movie app with legal free films, Ethiopian streaming services and sources you add yourself.">
+  <meta name="description" content="Sinima: a free, open-source movie app with legal free films and series, Ethiopian streaming services and sources you add yourself.">
   <title>Sinima</title>
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
@@ -17,109 +17,167 @@
   </header>
 
   <main>
-    <!-- FREE FILMS: public-domain films from the Internet Archive -->
-    <section id="view-free" class="view" aria-labelledby="free-h">
-      <h2 id="free-h" class="sr-only">Free films</h2>
-      <form id="free-search" class="search" role="search">
-        <input id="free-q" type="search" placeholder="Search free classic films" aria-label="Search free films">
+    <!-- HOME: rows of titles -->
+    <section id="view-home" class="view" aria-label="Home">
+      <div id="home-rows"></div>
+    </section>
+
+    <!-- SEARCH: everything at once -->
+    <section id="view-search" class="view" hidden aria-labelledby="search-h">
+      <h2 id="search-h" class="sr-only">Search</h2>
+      <form id="search-form" class="search" role="search">
+        <input id="search-q" type="search" placeholder="Search films, series and your sources" aria-label="Search everything">
         <button type="submit">Search</button>
       </form>
-      <div id="genres" class="chips" role="group" aria-label="Genres"></div>
-      <p class="hint">Old films that are in the public domain, from the Internet Archive. Free and legal to watch.</p>
-      <div id="free-grid" class="grid" aria-live="polite"></div>
-      <button id="free-more" class="ghost wide" hidden>Load more</button>
+      <div id="search-results"></div>
     </section>
 
-    <!-- SERVICES: legal services that work in Ethiopia (loaded from sources/ethiopia.json) -->
-    <section id="view-services" class="view" hidden aria-labelledby="svc-h">
-      <h2 id="svc-h">Legal services in Ethiopia</h2>
-      <p id="svc-note" class="hint"></p>
-      <div id="svc-list" class="cards"></div>
+    <!-- MY LIST: continue watching + saved -->
+    <section id="view-mylist" class="view" hidden aria-labelledby="mylist-h">
+      <h2 id="mylist-h">My list</h2>
+      <div id="mylist-body"></div>
     </section>
 
-    <!-- MY SOURCES: things the user adds by hand -->
-    <section id="view-mine" class="view" hidden aria-labelledby="mine-h">
+    <!-- SOURCES: things the user adds -->
+    <section id="view-sources" class="view" hidden aria-labelledby="sources-h">
       <div class="row-between">
-        <h2 id="mine-h">My sources</h2>
+        <h2 id="sources-h">My sources</h2>
         <button id="add-open" class="primary">+ Add</button>
       </div>
-      <p class="hint">Add channels, collections, playlists or websites you have the right to watch. Each one gets its own screen. They're saved on this device only.</p>
-      <div id="mine-list" class="cards"></div>
-      <details class="backup">
-        <summary>Back up or move my sources</summary>
-        <p class="hint">Copy this text to keep it safe, or paste text from another device and tap Import.</p>
-        <textarea id="backup-text" rows="5" aria-label="Sources backup text"></textarea>
-        <div class="row">
-          <button id="backup-copy" class="ghost">Copy</button>
-          <button id="backup-import" class="ghost">Import</button>
-        </div>
-        <p id="backup-msg" class="hint" role="status"></p>
-      </details>
+      <p class="hint">Add channels, collections, playlists or websites you have the right to watch. Each one gets its own screen and a row on Home. They're saved on this device only.</p>
+      <div id="sources-list" class="cards"></div>
     </section>
 
-    <!-- A source's own screen: its posters, search and Movies/Series tabs -->
-    <section id="view-source" class="view" hidden aria-labelledby="source-h">
-      <div class="row-between">
-        <button id="source-back" class="ghost">‹ Back</button>
-        <span id="source-badge" class="badge"></span>
+    <!-- MORE: services, settings, backup, about -->
+    <section id="view-more" class="view" hidden aria-labelledby="more-h">
+      <h2 id="more-h" class="sr-only">More</h2>
+
+      <h2>Legal services in Ethiopia</h2>
+      <p id="svc-note" class="hint"></p>
+      <div id="svc-list" class="cards"></div>
+
+      <h2 class="section-gap">Settings</h2>
+      <div class="card settings">
+        <label class="switch-row">
+          <span>Play the next episode automatically</span>
+          <input id="set-autoplay" type="checkbox">
+        </label>
+        <label class="switch-row">
+          <span>Playback speed</span>
+          <select id="set-speed">
+            <option value="0.75">0.75×</option><option value="1">1×</option><option value="1.25">1.25×</option>
+            <option value="1.5">1.5×</option><option value="2">2×</option>
+          </select>
+        </label>
+        <div class="row-between">
+          <span>Watch history</span>
+          <button id="clear-history" class="ghost">Clear</button>
+        </div>
+        <p id="settings-msg" class="hint" role="status"></p>
       </div>
-      <h2 id="source-h"></h2>
-      <form id="source-search" class="search" role="search">
-        <input id="source-q" type="search" placeholder="Search this source" aria-label="Search this source">
+
+      <h2 class="section-gap">Back up or move</h2>
+      <p class="hint">Copy this text to keep your sources and My list safe, or paste text from another device and tap Import.</p>
+      <textarea id="backup-text" rows="5" aria-label="Backup text"></textarea>
+      <div class="row">
+        <button id="backup-copy" class="ghost">Copy</button>
+        <button id="backup-import" class="ghost">Import</button>
+      </div>
+      <p id="backup-msg" class="hint" role="status"></p>
+
+      <h2 class="section-gap">About</h2>
+      <p class="hint">Sinima is free and open source (MIT license). No ads, no login. Built-in films and series are public-domain titles from the Internet Archive.
+        <a href="https://github.com/josecoolboy92/Sinima" target="_blank" rel="noopener">Source code on GitHub</a>.</p>
+    </section>
+
+    <!-- GRID: one source, one row's "See all", or one collection -->
+    <section id="view-grid" class="view" hidden aria-labelledby="grid-h">
+      <div class="bar">
+        <button class="ghost back" type="button">‹ Back</button>
+        <span id="grid-badge" class="badge"></span>
+      </div>
+      <h2 id="grid-h"></h2>
+      <form id="grid-search" class="search" role="search">
+        <input id="grid-q" type="search" placeholder="Search here" aria-label="Search this list">
         <button type="submit">Search</button>
       </form>
-      <div id="source-kinds" class="chips" role="group" aria-label="Show" hidden></div>
-      <div id="source-embed" hidden></div>
-      <div id="source-grid" class="grid" aria-live="polite"></div>
-      <button id="source-more" class="ghost wide" hidden>Load more</button>
+      <div id="grid-kinds" class="chips" role="group" aria-label="Show" hidden></div>
+      <div id="grid-embed" hidden></div>
+      <div id="grid-items" class="grid" aria-live="polite"></div>
+      <button id="grid-more" class="ghost wide" hidden>Load more</button>
     </section>
 
-    <!-- A series: its episodes -->
-    <section id="view-series" class="view" hidden aria-labelledby="series-h">
-      <button id="series-back" class="ghost">‹ Back</button>
-      <div class="series-head">
-        <img id="series-poster" alt="">
-        <div>
-          <h2 id="series-h"></h2>
-          <p id="series-info" class="hint"></p>
+    <!-- DETAIL: one film or series -->
+    <section id="view-detail" class="view" hidden aria-labelledby="detail-h">
+      <div class="detail-hero">
+        <div id="detail-backdrop" class="backdrop"></div>
+        <div class="bar on-hero"><button class="ghost back" type="button">‹ Back</button></div>
+        <div class="detail-head">
+          <img id="detail-poster" alt="">
+          <div>
+            <h2 id="detail-h"></h2>
+            <p id="detail-meta" class="hint"></p>
+          </div>
         </div>
       </div>
-      <div id="series-list" class="list"></div>
+      <div class="row detail-actions">
+        <button id="detail-play" class="primary">▶ Play</button>
+        <button id="detail-save" class="ghost">+ My list</button>
+        <a id="detail-download" class="ghost" target="_blank" rel="noopener" hidden>Download</a>
+      </div>
+      <p id="detail-desc" class="desc"></p>
+      <div id="detail-seasons" class="chips" role="group" aria-label="Seasons" hidden></div>
+      <div id="detail-episodes" class="list"></div>
+      <div id="detail-similar"></div>
     </section>
 
-    <!-- A website shown inside the app -->
+    <!-- WEB: a website shown inside the app -->
     <section id="view-web" class="view web-view" hidden aria-labelledby="web-h">
-      <div class="row-between">
-        <button id="web-back" class="ghost">‹ Back</button>
+      <div class="bar sticky">
+        <button class="ghost back" type="button">‹ Back</button>
         <h2 id="web-h" class="web-title"></h2>
         <a id="web-out" class="ghost" target="_blank" rel="noopener">Open in browser</a>
       </div>
-      <p class="hint">Some websites don't allow being shown inside other apps. If the page stays blank, tap "Open in browser".</p>
+      <p class="hint">Some websites don't allow being shown inside other apps. If you see an error or a blank page, tap "Open in browser".</p>
       <iframe id="web-frame" title="Website" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-presentation" allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
     </section>
   </main>
 
   <nav class="tabs" aria-label="Sections">
-    <button data-tab="free" aria-current="page">Free films</button>
-    <button data-tab="services">Services</button>
-    <button data-tab="mine">My sources</button>
+    <button data-tab="home" aria-current="page"><span aria-hidden="true">⌂</span>Home</button>
+    <button data-tab="search"><span aria-hidden="true">⌕</span>Search</button>
+    <button data-tab="mylist"><span aria-hidden="true">♡</span>My list</button>
+    <button data-tab="sources"><span aria-hidden="true">＋</span>Sources</button>
+    <button data-tab="more"><span aria-hidden="true">≡</span>More</button>
   </nav>
 
   <!-- Player -->
   <div id="player" class="overlay" hidden role="dialog" aria-modal="true" aria-labelledby="player-title">
     <div class="player-box">
       <div class="row-between">
-        <h3 id="player-title"></h3>
+        <div class="player-titles">
+          <h3 id="player-title"></h3>
+          <p id="player-info" class="hint"></p>
+        </div>
         <button id="player-close" class="ghost" aria-label="Close player">✕</button>
       </div>
       <video id="video" controls playsinline preload="metadata"></video>
       <iframe id="embed" title="Video player" hidden allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
-      <div id="player-nav" class="row" hidden>
-        <button id="player-prev" class="ghost">‹ Previous episode</button>
-        <button id="player-next" class="ghost">Next episode ›</button>
-      </div>
-      <p id="player-info" class="hint"></p>
       <p id="player-error" class="error" role="alert" hidden></p>
+      <div id="player-controls" class="player-controls">
+        <button id="player-prev" class="ghost" hidden>‹ Previous</button>
+        <label class="mini">Speed
+          <select id="player-speed">
+            <option value="0.75">0.75×</option><option value="1">1×</option><option value="1.25">1.25×</option>
+            <option value="1.5">1.5×</option><option value="2">2×</option>
+          </select>
+        </label>
+        <label class="mini">Subtitles
+          <select id="player-subs"><option value="">Off</option></select>
+        </label>
+        <button id="player-next" class="ghost" hidden>Next ›</button>
+      </div>
+      <input id="subs-file" type="file" accept=".srt,.vtt,text/vtt,application/x-subrip" hidden>
     </div>
   </div>
 

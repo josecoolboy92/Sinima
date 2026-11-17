@@ -1,10 +1,22 @@
 # Sinima
 
-A free, open-source movie app that runs in the browser and installs on a phone like a normal app (PWA).
+A free, open-source movie and series app that runs in the browser and installs on a phone like a normal app (PWA). No ads, no login.
 
-- **Free films**: thousands of public-domain classics from the [Internet Archive](https://archive.org/details/feature_films), free and legal to watch. You can search and browse by genre.
-- **Services**: legal streaming services that work in Ethiopia, loaded from [`sources/ethiopia.json`](sources/ethiopia.json).
-- **My sources**: add your own sources by hand. Each source gets its own screen inside the app, with its posters, a search box, Movies and Series tabs, and an episode list for series. Sources are saved on your device, and you can back them up or move them with copy and paste.
+**Live app:** <https://josecoolboy92.github.io/Sinima/>
+
+## What it does
+
+- **Home**: scrolling rows like a streaming app: Continue watching, My list, Popular free films, Classic TV series, Cartoons, genre rows, and a row for each of your sources. "See all" opens the full list with search.
+- **Details page** for every title: poster, description, length, Play / Resume, **+ My list**, Download (for free public-domain titles), seasons and episodes, and **More like this**.
+- **Continue watching**: remembers where you stopped each film or episode, and picks up from there.
+- **Player**: next and previous episode, plays the next episode automatically (you can turn this off in More), playback speed, and **subtitles** (the film's own subtitle files, or an `.srt`/`.vtt` file from your phone).
+- **Search**: one search across the free films, series and all your sources.
+- **My list**: save titles to watch later.
+- **Sources**: add your own collections, channels, playlists and websites (see below). Each gets its own screen and a Home row.
+- **More**: legal streaming services in Ethiopia ([`sources/ethiopia.json`](sources/ethiopia.json)), settings, and backup and restore of your sources and My list.
+- The phone's back button works between screens, and closes the player first.
+
+The built-in films and series are public-domain titles from the [Internet Archive](https://archive.org), free and legal to watch.
 
 ## Source types you can add
 
@@ -41,7 +53,8 @@ Put a file like this anywhere online (for example in a GitHub repository) and ad
       "url": "https://archive.org/download/night_of_the_living_dead/night_of_the_living_dead_512kb.mp4",
       "poster": "https://archive.org/services/img/night_of_the_living_dead",
       "year": 1968,
-      "description": "Public-domain horror classic."
+      "description": "Public-domain horror classic.",
+      "subtitles": [ { "label": "English", "url": "https://example.com/notld.en.srt" } ]
     }
   ],
   "series": [
@@ -91,7 +104,7 @@ Edit [`sources/ethiopia.json`](sources/ethiopia.json). Each service has a `name`
 | --- | --- |
 | `index.html` | The page layout |
 | `styles.css` | Colors and layout |
-| `app.js` | All app logic (commented). Each source type is an "adapter" in `ADAPTERS` |
+| `app.js` | All app logic (commented). Each source type is an "adapter" in `ADAPTERS`; Home rows are in `HOME_ROWS` |
 | `sources/ethiopia.json` | The legal services list |
 | `manifest.webmanifest`, `sw.js`, `icons/` | Make it installable and let it open offline |
 
